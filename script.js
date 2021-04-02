@@ -183,6 +183,8 @@ async function start(entries, comparisons, comparisonIndex = 0) {
     toggleRanksButton.hidden = false;
     comparisonHeading.hidden = false;
 
+    hideRanking();
+
     repopulateRanksList(entries);
 
     const uniqueComparisons = generateUniqueComparisons(entries, comparisons);
