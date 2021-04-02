@@ -13,6 +13,8 @@ toggleStartOptionsButton.addEventListener('click', () => {
 
 const pairsTextarea = document.getElementById('pairs');
 
+const startButton = document.getElementById('input');
+
 const loadFromLocalStorageButton = document.getElementById('load-from-local-storage');
 if (localStorage.getItem('state') != null) {
     loadFromLocalStorageButton.hidden = false;
@@ -49,6 +51,47 @@ toggleRanksButton.addEventListener('click', () => {
         hideRanking();
     }
 });
+
+const urlParams = new URLSearchParams(window.location.search);
+const idParam = urlParams.get('id');
+
+const controls = [
+    toggleStartOptionsButton,
+    loadFromLocalStorageButton,
+    toggleRanksButton,
+    pairsTextarea,
+    startButton,
+];
+
+if (idParam != null && idParam.trim().length > 0) {
+    controls.forEach(control => {
+        control.disabled = true;
+    });
+
+    fetch('lists.json')
+        .then(res => res.json())
+        .catch(() => {
+            alert('Noe gikk galt :( men du kan fortsatt skrive inn alternativer selv');
+        })
+        .then(lists => lists[idParam])
+        .then(listBase64 => {
+            if (listBase64 == null) {
+                throw new Error(`Fant ingen liste med ID "${idParam}", men du kan fortsatt skrive inn alternativer selv`)
+            }
+            return atob(listBase64);
+        })
+        .then(list => {
+            pairsTextarea.value = list;
+        })
+        .catch(err => {
+            alert(err.message);
+        })
+        .finally(() => {
+            controls.forEach(control => {
+                control.disabled = false;
+            });
+        });
+}
 
 const comparisonHeading = document.getElementById('comparison-heading');
 const progress = document.getElementById('progress');
@@ -92,7 +135,7 @@ function generateComparisonsForEntry(entry, index, entries) {
     });
 }
 
-document.getElementById('input').addEventListener('submit', async (e) => {
+startButton.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const entries = Array.from(
