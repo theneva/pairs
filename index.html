@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    <title>Hvilket valg er best?</title>
+    <style>
+        h2, p {
+            text-align: center;
+        }
+
+        td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        td > button {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<button id="toggle-start-options" hidden>Vis omstartsmuligheter</button>
+<div id="start-options">
+    <button id="load-from-local-storage" hidden>Fortsett fra tidligere</button>
+    <form id="input">
+        <label for="pairs">Ett valg per linje</label>
+        <textarea id="pairs"></textarea>
+        <button type="submit">Start</button>
+    </form>
+</div>
+<button id="toggle-ranks" hidden>Vis rangering</button>
+<ol id="ranks" hidden></ol>
+<h2 id="comparison-heading" hidden>Hvilket alternativ er best?</h2>
+<p id="progress"></p>
+<table id="comparisons"><tbody></tbody></table>
+<script src="/script.js"></script>
+</body>
+</html>
