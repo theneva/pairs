@@ -143,12 +143,8 @@ async function start(entries, comparisons, comparisonIndex = 0) {
         const next = new Promise(resolve => {
             const leftTd = createTd(left, resolve);
             const rightTd = createTd(right, resolve);
-
-            const or = document.createElement('td');
-            or.innerText = 'eller';
-
+            
             row.appendChild(leftTd);
-            row.appendChild(or)
             row.appendChild(rightTd);
         });
 
