@@ -51,7 +51,7 @@ const tbody = document.getElementById('comparisons').querySelector('tbody');
 
 function repopulateRanksList(entries) {
     ranksList.innerHTML = ''; // remove all children
-    const rankNodes = Array.from(entries)
+    Array.from(entries)
         .sort((a, b) => b.score - a.score)
         .forEach(({label, score}) => {
             const li = document.createElement('li');
@@ -143,7 +143,7 @@ async function start(entries, comparisons, comparisonIndex = 0) {
         const next = new Promise(resolve => {
             const leftTd = createTd(left, resolve);
             const rightTd = createTd(right, resolve);
-            
+
             row.appendChild(leftTd);
             row.appendChild(rightTd);
         });
