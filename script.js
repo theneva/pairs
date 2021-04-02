@@ -34,13 +34,19 @@ loadFromLocalStorageButton.addEventListener('click', async () => {
 
 const ranksList = document.getElementById('ranks');
 const toggleRanksButton = document.getElementById('toggle-ranks');
+function showRanking() {
+    ranksList.hidden = false;
+    toggleRanksButton.innerText = 'Skjul rangering';
+}
+function hideRanking() {
+    ranksList.hidden = true;
+    toggleRanksButton.innerText = 'Vis rangering';
+}
 toggleRanksButton.addEventListener('click', () => {
     if (ranksList.hidden) {
-        ranksList.hidden = false;
-        toggleRanksButton.innerText = 'Skjul rangering';
+        showRanking();
     } else {
-        ranksList.hidden = true;
-        toggleRanksButton.innerText = 'Vis rangering';
+        hideRanking();
     }
 });
 
@@ -176,6 +182,7 @@ async function start(entries, comparisons, comparisonIndex = 0) {
     comparisonHeading.hidden = true;
     progress.innerText = 'Ferdig!';
     tbody.innerHTML = '';
+    showRanking();
 }
 
 function shuffle(array) {
