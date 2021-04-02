@@ -24,8 +24,11 @@ loadFromLocalStorageButton.addEventListener('click', async () => {
         return;
     }
 
-    const {entries, comparisonIndex} = JSON.parse(state);
-    await start(entries, comparisonIndex);
+    const {entries, entryIndexComparisons, comparisonIndex} = JSON.parse(state);
+    const comparisons = entryIndexComparisons.map(
+        ([left, right]) => [entries[left], entries[right]]
+    );
+    await start(entries, comparisons, comparisonIndex);
 });
 
 
@@ -100,14 +103,13 @@ document.getElementById('input').addEventListener('submit', async (e) => {
         }))
         .sort((left, right) => left.label.localeCompare(right.label));
 
-    shuffle(entries);
+    const comparisons = entries.map(generateComparisonsForEntry).flat();
+    shuffle(comparisons);
 
-    await start(entries);
+    await start(entries, comparisons);
 });
 
-function generateUniqueComparisons(entries) {
-    const comparisons = entries.map(generateComparisonsForEntry).flat();
-
+function generateUniqueComparisons(entries, comparisons) {
     const uniqueComparisons = [];
 
     for (const comparison of comparisons) {
@@ -124,7 +126,7 @@ function generateUniqueComparisons(entries) {
     return uniqueComparisons;
 }
 
-async function start(entries, comparisonIndex = 0) {
+async function start(entries, comparisons, comparisonIndex = 0) {
     startOptions.hidden = true;
     toggleStartOptionsButton.innerText = 'Vis omstartsmuligheter';
     toggleStartOptionsButton.hidden = false;
@@ -134,9 +136,9 @@ async function start(entries, comparisonIndex = 0) {
 
     repopulateRanksList(entries);
 
-    const comparisons = generateUniqueComparisons(entries);
+    const uniqueComparisons = generateUniqueComparisons(entries, comparisons);
 
-    const comparisonRows = comparisons.map(([left, right]) => {
+    const comparisonRows = uniqueComparisons.map(([left, right]) => {
         const row = document.createElement('tr');
         const next = new Promise(resolve => {
             const leftTd = createTd(left, resolve);
@@ -154,6 +156,13 @@ async function start(entries, comparisonIndex = 0) {
     });
 
 
+    // Used to store progress in localStorage; kinda expensive to
+    // calculate and doesn't change, so we just do it once.
+    const entryIndexComparisons = comparisons.map(comparison => [
+        entries.findIndex(entry => entry.label === comparison[0].label),
+        entries.findIndex(entry => entry.label === comparison[1].label),
+    ]);
+
     for (const [index, row] of comparisonRows.entries()) {
         if (index < comparisonIndex) {
             // fast-forward to the correct index
@@ -165,7 +174,7 @@ async function start(entries, comparisonIndex = 0) {
         await row.next;
         repopulateRanksList(entries);
 
-        localStorage.setItem('state', JSON.stringify({entries, comparisonIndex: index + 1}));
+        localStorage.setItem('state', JSON.stringify({entries, entryIndexComparisons, comparisonIndex: index + 1}));
     }
 
     comparisonHeading.hidden = true;
